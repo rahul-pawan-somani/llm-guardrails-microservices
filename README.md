@@ -215,7 +215,7 @@ Output Guardrails
 }
 ```
 
-The output demonstrates how configured guardrails automatically modify generated content before it reaches the user.
+Configured guardrails automatically modify generated content before it reaches the user.
 
 ---
 
@@ -245,97 +245,54 @@ Example scenarios include:
 
 ```text
 .
+llm-guardrails-microservices/
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+│
+├── tests/
+│   ├── __init__.py
+│   ├── firebase_helper.py
+│   ├── test_integration_live.py
+│   └── test_services.py
+│
+├── .dockerignore
+├── .env.example
+├── .gitignore
+│
+├── Dockerfile
+├── compose.yml
+│
 ├── auberge.py
 ├── guardrails.py
 ├── llm.py
-├── database.py
-├── test5.py
+│
 ├── requirements.txt
 └── README.md
 ```
 
 ---
+## Getting Started
 
-## Installation
+### Install Dependencies
 
 ```bash
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
 ---
 
-## Environment Variables
+## Testing
 
-The system requires the following environment variables:
+### Automated Service Tests
 
-### Firebase
-
-```text
-FIREBASE_DB=<firebase_database_name>
-```
-
-Example:
-
-```text
-FIREBASE_DB=guardrails-3d1c1
-```
-
-### Mistral
-
-```text
-MISTRAL_API_KEY=<your_api_key>
-```
-
----
-
-## Running the Services
-
-### Terminal 1
+The deterministic test suite mocks external Firebase and Mistral requests, allowing it to run locally and in GitHub Actions without external credentials:
 
 ```bash
-python llm.py
-```
-
-Runs on:
-
-```text
-localhost:3000
-```
-
----
-
-### Terminal 2
-
-```bash
-python guardrails.py
-```
-
-Runs on:
-
-```text
-localhost:3001
-```
-
----
-
-### Terminal 3
-
-```bash
-python auberge.py
-```
-
-Runs on:
-
-```text
-localhost:3002
-```
-
----
-
-## Running Tests
-
-```bash
-python test5.py
+python -m unittest tests.test_services -v
 ```
 
 The test suite validates end-to-end functionality across all microservices.
@@ -376,15 +333,11 @@ The test suite validates end-to-end functionality across all microservices.
 
 Potential future enhancements include:
 
-* Role-based guardrail administration
-* Guardrail prioritisation and ordering
-* User-specific guardrail profiles
-* Audit logging and monitoring
-* Docker containerisation
-* Kubernetes deployment
-* Authentication and authorisation
-* Semantic guardrails using embedding models
-* Real-time analytics dashboard
-
-```
-```
+- authentication and authorisation;
+- role-based guardrail administration;
+- guardrail prioritisation and ordering;
+- user-specific guardrail profiles;
+- semantic guardrails using embedding models;
+- centralised log aggregation and distributed tracing;
+- Kubernetes deployment;
+- real-time guardrail analytics and monitoring.
