@@ -1,4 +1,4 @@
-# LLM Guardrails Microservices System
+# LLM Guardrails Microservices Prototype
 
 ## Overview
 
