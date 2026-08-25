@@ -291,13 +291,13 @@ For a default Firebase Realtime Database in `europe-west1`, `FIREBASE_DB` is the
 For example, for:
 
 ```text
-https://guardrails-3d1c1-default-rtdb.europe-west1.firebasedatabase.app
+https://guardrails-3d1c1-default-rtdb.europe-west1.firebasedatabase.app](https://example-project-default-rtdb.europe-west1.firebasedatabase.app
 ```
 
 use:
 
 ```env
-FIREBASE_DB=guardrails-3d1c1
+FIREBASE_DB=example-project
 ```
 
 The `.env` file contains local credentials and is excluded from version control through `.gitignore`.
@@ -401,7 +401,7 @@ The live integration suite covers:
 * service-to-service orchestration;
 * end-to-end output sanitisation.
 
-> **Important:** the current live integration tests clear the `/guardrails` collection in the configured Firebase database. Run them only against a database where that data can safely be reset.
+> Temporary guardrails created by the live integration tests are removed individually after each test.
 
 ---
 
