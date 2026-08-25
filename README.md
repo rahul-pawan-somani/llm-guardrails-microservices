@@ -19,6 +19,9 @@ Guardrails are centrally managed through a Firebase Realtime Database and are au
 * Firebase Realtime Database
 * Mistral API
 * Requests
+* Docker
+* Docker Compose
+* GitHub Actions
 * Microservices Architecture
 
 ---
@@ -222,7 +225,6 @@ Configured guardrails automatically modify generated content before it reaches t
 ## Repository Structure
 
 ```text
-.
 llm-guardrails-microservices/
 │
 ├── .github/
@@ -251,14 +253,101 @@ llm-guardrails-microservices/
 ```
 
 ---
+
 ## Getting Started
 
 ### Install Dependencies
 
+Create and activate a virtual environment:
+
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
+```
+
+Install the project dependencies:
+
+```bash
 pip install -r requirements.txt
+```
+
+### Environment Configuration
+
+Create a local environment file from the supplied template:
+
+```bash
+cp .env.example .env
+```
+
+Update `.env` with the required Firebase and Mistral credentials:
+
+```env
+FIREBASE_DB=your-firebase-project-id
+MISTRAL_API_KEY=your-mistral-api-key
+```
+
+For a default Firebase Realtime Database in `europe-west1`, `FIREBASE_DB` is the portion of the database name before `-default-rtdb`.
+
+For example, for:
+
+```text
+https://guardrails-3d1c1-default-rtdb.europe-west1.firebasedatabase.app
+```
+
+use:
+
+```env
+FIREBASE_DB=guardrails-3d1c1
+```
+
+The `.env` file contains local credentials and is excluded from version control through `.gitignore`.
+
+### Run with Docker Compose
+
+With Docker running:
+
+```bash
+docker compose up --build
+```
+
+The services are exposed on:
+
+| Service    | Port |
+| ---------- | ---: |
+| LLM        | 3000 |
+| Guardrails | 3001 |
+| Auberge    | 3002 |
+
+Health endpoints are available at:
+
+```text
+http://localhost:3000/health
+http://localhost:3001/health
+http://localhost:3002/health
+```
+
+### Local Development
+
+To run the services directly without Docker, first load the environment variables:
+
+```bash
+set -a
+source .env
+set +a
+```
+
+Then run each service in a separate terminal:
+
+```bash
+python llm.py
+```
+
+```bash
+python guardrails.py
+```
+
+```bash
+python auberge.py
 ```
 
 ---
@@ -274,6 +363,45 @@ Run locally with:
 ```bash
 python -m unittest tests.test_services -v
 ```
+
+The automated suite covers:
+
+* request validation;
+* Mistral response handling;
+* regular-expression validation;
+* Firebase CRUD behaviour through mocked HTTP responses;
+* input and output sanitisation;
+* downstream-service failure handling.
+
+The same deterministic suite runs through GitHub Actions on pushes to `main` and on pull requests.
+
+### Live Integration Tests
+
+A separate five-test integration suite exercises the running microservices against configured Firebase and Mistral dependencies.
+
+First load the local environment configuration:
+
+```bash
+set -a
+source .env
+set +a
+```
+
+With all three services running, execute:
+
+```bash
+RUN_LIVE_TESTS=1 python -m unittest tests.test_integration_live -v
+```
+
+The live integration suite covers:
+
+* LLM service communication;
+* Firebase-backed guardrail creation and retrieval;
+* invalid regular-expression rejection;
+* service-to-service orchestration;
+* end-to-end output sanitisation.
+
+> **Important:** the current live integration tests clear the `/guardrails` collection in the configured Firebase database. Run them only against a database where that data can safely be reset.
 
 ---
 
@@ -291,21 +419,6 @@ python -m unittest tests.test_services -v
 - Deterministic CI testing
 - Five-test live integration suite
 
----
-
-## Skills Demonstrated
-
-* Software Engineering
-* Distributed Systems
-* Microservices Architecture
-* REST API Development
-* Flask
-* Firebase
-* Generative AI Integration
-* AI Safety
-* Content Moderation
-* Automated Testing
-* Python Development
 
 ---
 
