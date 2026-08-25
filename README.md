@@ -1,8 +1,9 @@
 # LLM Guardrails Microservices Prototype
+[![CI](https://github.com/rahul-pawan-somani/llm-guardrails-microservices/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/rahul-pawan-somani/llm-guardrails-microservices/actions/workflows/ci.yml)
 
 ## Overview
 
-This project implements a distributed microservice architecture for Large Language Model (LLM) safety and content moderation.
+This project implements a three-service microservices architecture for Large Language Model (LLM) safety and content moderation.
 
 The system consists of three independent services that work together to process user prompts, apply configurable guardrails, interact with a language model, and sanitise generated responses before they are returned to users.
 
@@ -19,7 +20,6 @@ Guardrails are centrally managed through a Firebase Realtime Database and are au
 * Mistral API
 * Requests
 * Microservices Architecture
-* Distributed Systems
 
 ---
 
@@ -112,7 +112,7 @@ Example guardrail:
 ```json
 {
   "id": "email-001",
-  "regx": "[a-zA-Z0-9_.]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+",
+  "regx": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
   "sub": "<Email Address>"
 }
 ```
@@ -219,28 +219,6 @@ Configured guardrails automatically modify generated content before it reaches t
 
 ---
 
-## Integration Testing
-
-The repository includes automated integration tests that verify communication between all three services.
-
-The tests validate:
-
-* LLM endpoint functionality
-* Guardrail CRUD operations
-* Regular expression validation
-* Firebase persistence
-* Service orchestration
-* End-to-end guardrail application
-
-Example scenarios include:
-
-* Replacing sensitive information using regular expressions
-* Rejecting invalid guardrail definitions
-* Verifying sanitisation of LLM outputs
-* Confirming distributed service communication
-
----
-
 ## Repository Structure
 
 ```text
@@ -289,27 +267,29 @@ pip install -r requirements.txt
 
 ### Automated Service Tests
 
-The deterministic test suite mocks external Firebase and Mistral requests, allowing it to run locally and in GitHub Actions without external credentials:
+The deterministic test suite uses mocked external Firebase and Mistral requests so that service behaviour can be tested reliably without external credentials.
+
+Run locally with:
 
 ```bash
 python -m unittest tests.test_services -v
 ```
 
-The test suite validates end-to-end functionality across all microservices.
-
 ---
 
 ## Key Features
 
-* Distributed microservice architecture
-* LLM integration using Mistral
-* Firebase-backed guardrail storage
-* Regex-based content filtering
-* Input sanitisation
-* Output sanitisation
-* REST API communication
-* Automated integration testing
-* Centralised guardrail management
+- Three-service Flask microservices architecture
+- Mistral LLM integration
+- Firebase-backed guardrail storage
+- Regex-based configurable content filtering
+- Input and output sanitisation
+- REST-based service communication
+- Environment-based service configuration
+- Docker Compose orchestration
+- Structured service logging
+- Deterministic CI testing
+- Five-test live integration suite
 
 ---
 
