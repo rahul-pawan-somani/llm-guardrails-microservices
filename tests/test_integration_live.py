@@ -4,7 +4,7 @@ import unittest
 
 import requests
 
-from tests.firebase_helper import clear_guardrails
+from tests.firebase_helper import delete_guardrail
 
 
 LLM_URL = os.getenv(
@@ -40,6 +40,18 @@ RUN_LIVE_TESTS = (
 )
 class LiveIntegrationTests(unittest.TestCase):
 
+    def tearDown(self):
+        for guardrail_id in (
+            "name-001",
+            "email-live-001",
+            "broken",
+            "rome-live-001",
+        ):
+            try:
+                delete_guardrail(guardrail_id)
+            except requests.RequestException:
+                pass
+
     def test_001_llm_returns_output(self):
         response = requests.post(
             LLM_URL,
@@ -68,8 +80,6 @@ class LiveIntegrationTests(unittest.TestCase):
         )
 
     def test_002_guardrail_create_and_read(self):
-        clear_guardrails()
-
         guardrail_id = "name-001"
 
         payload = {
@@ -113,9 +123,7 @@ class LiveIntegrationTests(unittest.TestCase):
     def test_003_email_guardrail_create_and_read(
         self
     ):
-        clear_guardrails()
-
-        guardrail_id = "email-001"
+        guardrail_id = "email-live-001"
 
         payload = {
             "id": guardrail_id,
@@ -160,8 +168,6 @@ class LiveIntegrationTests(unittest.TestCase):
         )
 
     def test_004_invalid_regex_is_rejected(self):
-        clear_guardrails()
-
         guardrail_id = "broken"
 
         payload = {
@@ -185,9 +191,7 @@ class LiveIntegrationTests(unittest.TestCase):
         )
 
     def test_005_output_guardrail_end_to_end(self):
-        clear_guardrails()
-
-        guardrail_id = "rome-001"
+        guardrail_id = "rome-live-001"
 
         payload = {
             "id": guardrail_id,

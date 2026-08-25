@@ -3,8 +3,12 @@ services:
     build: .
     command: python llm.py
 
-    env_file:
-      - .env
+    environment:
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY}
+      MISTRAL_MODEL: ${MISTRAL_MODEL:-mistral-small-latest}
+      MISTRAL_URL: ${MISTRAL_URL:-https://api.mistral.ai/v1/chat/completions}
+      MISTRAL_TIMEOUT: ${MISTRAL_TIMEOUT:-30}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
 
     ports:
       - "3000:3000"
@@ -15,7 +19,7 @@ services:
           "CMD",
           "python",
           "-c",
-          "import urllib.request; urllib.request.urlopen('http://localhost:3000/health', timeout=2)"
+          "import urllib.request; urllib.request.urlopen('http://localhost:3000/health', timeout=2)",
         ]
       interval: 10s
       timeout: 3s
@@ -26,8 +30,10 @@ services:
     build: .
     command: python guardrails.py
 
-    env_file:
-      - .env
+    environment:
+      FIREBASE_DB: ${FIREBASE_DB}
+      FIREBASE_TIMEOUT: ${FIREBASE_TIMEOUT:-10}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
 
     ports:
       - "3001:3001"
@@ -38,7 +44,7 @@ services:
           "CMD",
           "python",
           "-c",
-          "import urllib.request; urllib.request.urlopen('http://localhost:3001/health', timeout=2)"
+          "import urllib.request; urllib.request.urlopen('http://localhost:3001/health', timeout=2)",
         ]
       interval: 10s
       timeout: 3s
@@ -49,12 +55,11 @@ services:
     build: .
     command: python auberge.py
 
-    env_file:
-      - .env
-
     environment:
       GUARDRAILS_URL: http://guardrails:3001
       LLM_URL: http://llm:3000/llm
+      SERVICE_TIMEOUT: ${SERVICE_TIMEOUT:-10}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
 
     ports:
       - "3002:3002"
@@ -72,7 +77,7 @@ services:
           "CMD",
           "python",
           "-c",
-          "import urllib.request; urllib.request.urlopen('http://localhost:3002/health', timeout=2)"
+          "import urllib.request; urllib.request.urlopen('http://localhost:3002/health', timeout=2)",
         ]
       interval: 10s
       timeout: 3s

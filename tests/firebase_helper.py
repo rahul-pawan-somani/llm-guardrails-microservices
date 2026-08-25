@@ -23,9 +23,12 @@ def _base_url() -> str:
     )
 
 
-def clear_guardrails():
+def delete_guardrail(guardrail_id: str):
     response = requests.delete(
-        f"{_base_url()}/guardrails.json",
+        (
+            f"{_base_url()}/guardrails/"
+            f"{guardrail_id}.json"
+        ),
         timeout=TIMEOUT,
     )
 
